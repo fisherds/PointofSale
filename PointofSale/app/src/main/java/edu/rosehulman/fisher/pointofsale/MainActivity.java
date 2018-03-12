@@ -1,6 +1,8 @@
 package edu.rosehulman.fisher.pointofsale;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     mQuantityTextView = (TextView) findViewById(R.id.quantity_text);
     mDateTextView = (TextView) findViewById(R.id.date_text);
 
-    mCurrentItem = Item.getDefaultItem();
+
 
 
     FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
       public void onClick(View view) {
 //        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //            .setAction("Action", null).show();
+        mCurrentItem = Item.getDefaultItem();
         Log.d(Constants.TAG, "You clicked the button.");
         showCurrentItem();
 
@@ -45,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void showCurrentItem() {
-    mNameTextView.setText(mCurrentItem.name);
-    mQuantityTextView.setText("" + mCurrentItem.quantity);
-    mDateTextView.setText(mCurrentItem.getDeliveryDateString());
+    mNameTextView.setText(getString(R.string.name_format, mCurrentItem.name));
+    mQuantityTextView.setText(getString(R.string.quantity_format, mCurrentItem.quantity));
+    mDateTextView.setText(getString(R.string.date_format, mCurrentItem.getDeliveryDateString()));
   }
 
   @Override
@@ -59,14 +62,15 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    int id = item.getItemId();
-
-    //noinspection SimplifiableIfStatement
-    if (id == R.id.action_settings) {
-      return true;
+    switch (item.getItemId()) {
+      case R.id.action_settings:
+        startActivity(new Intent(Settings.ACTION_SETTINGS));
+        return true;
+      case R.id.action_reset:
+        Log.d(Constants.TAG, "You clicked reset!");
+        mCurrentItem = new Item();
+        showCurrentItem();
+        return true;
     }
 
     return super.onOptionsItemSelected(item);
