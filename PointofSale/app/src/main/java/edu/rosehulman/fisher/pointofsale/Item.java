@@ -31,4 +31,8 @@ public class Item {
         return DateFormat.getDateInstance(DateFormat.MEDIUM).format(deliveryDate.getTime());
                 // DateFormat.getDateInstance().format(deliveryDate);
     }
+
+    public long getDeliveryDateTime() {
+        return deliveryDate.getTime().getTime();
+    }
 }
