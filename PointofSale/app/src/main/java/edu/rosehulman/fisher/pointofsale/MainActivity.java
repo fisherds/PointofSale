@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
   private TextView mQuantityTextView;
   private TextView mDateTextView;
   private Item mClearedItem;
-  private List<Item> mItems;
+  private ArrayList<Item> mItems;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +99,6 @@ public class MainActivity extends AppCompatActivity {
     });
     builder.setNegativeButton(android.R.string.cancel, null);
     builder.create().show();
-
-
   }
 
   private void showCurrentItem() {
@@ -147,6 +145,9 @@ public class MainActivity extends AppCompatActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
+      case R.id.action_search:
+        showSearchDialog();
+        return true;
       case R.id.action_settings:
         startActivity(new Intent(Settings.ACTION_SETTINGS));
         return true;
@@ -167,10 +168,53 @@ public class MainActivity extends AppCompatActivity {
               }
             });
         snackbar.show();
-
+        return true;
+      case R.id.action_clear_all:
+        Log.d(Constants.TAG, "You clicked clear all!");
+        confirmationDialog();
         return true;
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  private void showSearchDialog() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+    builder.setTitle("Choose an item");
+    builder.setItems(getNames(), new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        mCurrentItem = mItems.get(which);
+        showCurrentItem();
+      }
+    });
+    builder.setNegativeButton(android.R.string.cancel, null);
+    builder.create().show();
+  }
+
+  private String[] getNames() {
+    String[] names = new String[mItems.size()];
+    for (int i = 0; i < mItems.size(); i++) {
+      names[i] = mItems.get(i).name;
+    }
+    return names;
+  }
+
+  private void confirmationDialog() {
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+    builder.setTitle("Remove");
+    View view = getLayoutInflater().inflate(R.layout.dialog_confirmation, null, false);
+    builder.setView(view);
+
+    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        mItems.clear();
+        showCurrentItem();
+      }
+    });
+    builder.setNegativeButton(android.R.string.cancel, null);
+    builder.create().show();
   }
 }
